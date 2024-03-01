@@ -41,7 +41,7 @@ class Mahasiswa extends LingkunganKampus
 
     public function konsultasi()
     {
-        return "Mahasiswa {$this->nama} sedang berkonsultasi dengan Dosen Wali.";
+        return "Mahasiswa {$this->nama}, dengan nim {$this->nim} sedang berkonsultasi dengan dosen wali terkait KRS.";
     }
 }
 
@@ -63,14 +63,89 @@ class DosenWali extends LingkunganKampus
 
     public function urusKRS()
     {
-        return "Dosen Wali {$this->nama} sedang mengurus KRS.";
+        return "Dosen wali {$this->nama} sedang mengurus KRS ";
     }
 }
 
-// Membuat objek mahasiswa dan dosen wali
-$lingkunganKampus = new LingkunganKampus("Politeknik Negeri Malang");
-$mahasiswa = new Mahasiswa("Hanif Aji Prasetyo", "123456789", $lingkunganKampus->getKampus());
-$dosenWali = new DosenWali("Pak Dosen Wali", $lingkunganKampus->getKampus());
+// Mengambil inputan form
+$mhs = isset($_POST['nama_mhs']) ? $_POST['nama_mhs'] : ''; // Nama Mahasiswa
+$nim = isset($_POST['nim']) ? $_POST['nim'] : ''; // NIM
+$dosen_wali = isset($_POST['dosen_wali']) ? $_POST['dosen_wali'] : ''; // Nama Dosen Wali
+$kampus = isset($_POST['kampus']) ? $_POST['kampus'] : ''; // Nama Kampus
 
-// Menampilkan ilustrasi di browser
-echo $mahasiswa->konsultasi() . " </br>" . $dosenWali->urusKRS() . " di lingkungan Kampus " . $lingkunganKampus->getKampus();
+
+// Membuat objek dari semua class
+$lingkunganKampus = new LingkunganKampus($kampus);
+$mahasiswa = new Mahasiswa($mhs, $nim, $lingkunganKampus->getKampus());
+$dosenWali = new DosenWali($dosen_wali, $lingkunganKampus->getKampus());
+
+
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urus KRS</title>
+    <style>
+        .input {
+            margin: 5px 0;
+        }
+
+        .input input {
+            display: block;
+        }
+
+        form {
+            width: 300px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: lightblue;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <br><br>
+    <form action="index.php" method="post">
+        <h3>Form Urus KRS</h3>
+        <div class="input">
+            <label for="nama_mhs">Nama Mahasiswa : </label>
+            <input type="text" name="nama_mhs" id="nama_mhs">
+        </div>
+        <div class="input">
+            <label for="nim">NIM : </label>
+            <input type="text" name="nim" id="nim">
+        </div>
+        <div class="input">
+            <label for="dosen_wali">Nama Dosen Wali : </label>
+            <input type="text" name="dosen_wali" id="dosen_wali">
+        </div>
+        <div class="input">
+            <label for="kampus">Nama Kampus : </label>
+            <input type="text" name="kampus" id="kampus">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h4 style="text-align:center">
+        <?php if (isset($_POST['nama_mhs']) && isset($_POST['nim']) && isset($_POST['dosen_wali']) && isset($_POST['kampus'])) : ?>
+            <?= $mahasiswa->konsultasi() . " </br>" . $dosenWali->urusKRS() . " di Kampus " . $lingkunganKampus->getKampus() . "." ?>
+        <?php else : ?>
+            Form belum diisi semua
+        <?php endif; ?>
+    </h4>
+</body>
+
+</html>
